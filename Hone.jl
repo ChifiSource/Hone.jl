@@ -23,4 +23,12 @@ function Circle(diameter,x,y,fillin)
 end
 function polygon()
 end
+function Scatter(x,y,shape)
+    top = maximum(y)
+    bottom = minimum(x)
+    
+end
+
+end
+# =====================================
 end
