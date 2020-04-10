@@ -1,0 +1,9 @@
+authors = ["emmett emmett@emmettboudreau.com"]
+name = "Hone"
+uuid = ""
+version = "0.0.1"
+
+[deps]
+Lathe = "38d8eb38-e7b1-11e9-0012-376b6c802672"
+[compat]
+julia = "1.0.3"
