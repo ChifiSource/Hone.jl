@@ -1,4 +1,11 @@
 module HDraw
+@doc """Line\n
+-------------------------------\n
+The circle object creates a drawable scalable vector graphic circle.\n
+Circle(x,y,diameter,fillin)\n
+pairs:: NTuple[Int64/float64] Vector2s determining line position.\n
+color:: Fill color, takes Julia Symbol type.\n
+line_example = Line([(-1,-1), (-1,1), (1,1)],:blue)"""
 function Line(pairs, color)
     tree() = introspect(composition)
     show() = composition
