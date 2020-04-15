@@ -6,7 +6,7 @@
 ==#
 module Hone
 using Compose
-include("HPlots.jl")
+include("HPlot.jl")
 include("HDraw.jl")
 
 
