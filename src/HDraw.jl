@@ -1,3 +1,4 @@
+module HDraw
 function Line(pairs, color)
     tree() = introspect(composition)
     show() = composition
@@ -20,13 +21,14 @@ diameter:: The diameter of the circle.\n
 fillin:: Fill color, takes Julia Symbol type.\n
 big = Circle(.5,.5,.01,:orange)"""
 function Circle(x,y,diameter,fillin)
-    composition = compose(context(), circle(x,y,diameter), fill(fillin))
-   #     "compose(context(),circle(.5,.5,.1))
-    tag = string("circle(",string(x),", ",string(y),", ",string(diameter),")")
+    composition = compose(context(), circle(x,y,diameter), fill(string(fillin))
+    tag = string("circle(",string(x),", ",string(y),", ",string(diameter),"fill(string(","))")
     tree() = introspect(composition)
     show() = composition
     x = x
     y = y
-    update(x,y) =  string("circle(",string(x),',',string(y),',',diameter,"), ")
+    update(x,y) =  string("circle(",string(x),",",string(y),',',diameter,",fill(string(",Symbol(fillin),")))")
     (var)->(show;composition;tree;tag;x;y;update;diameter)
+end
+#---------------------------------------------------
 end
