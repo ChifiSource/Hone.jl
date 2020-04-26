@@ -2,7 +2,7 @@ module HPlot
 #==
 \/\/\Parts/\/\/
 ==#
-using HDraw: Line
+include("HDraw.jl")
 using Compose
 @doc """Scatter\n
 -------------------------------\n
