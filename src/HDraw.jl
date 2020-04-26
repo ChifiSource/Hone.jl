@@ -29,7 +29,7 @@ diameter:: The diameter of the circle.\n
 fillin:: Fill color, takes Julia Symbol type.\n
 big = Circle(.5,.5,.01,:orange)"""
 function Circle(x,y,diameter,fillin)
-    composition = compose(context(), circle(x,y,diameter), fill(string(fillin))
+    composition = compose(context(), circle(x,y,diameter), fill(string(fillin)))
     color = string("\"",string(fillin),"\"")
     tag = string("circle(",string(x),",",string(y),',',diameter,"), fill(", color , "),")
     println(color)
