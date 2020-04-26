@@ -3,6 +3,7 @@ module HPlot
 \/\/\Parts/\/\/
 ==#
 include("HDraw.jl")
+using Compose
 @doc """Scatter\n
 -------------------------------\n
 The Scatter function will create an object that stores meta information related to the contents of the scatterplot, and then parse coordinates and draw lines to create the plot.\n
@@ -14,11 +15,13 @@ big = Scatter(x,y,shape)"""
 function Scatter(x,y,shape,debug=false)
    topx = maximum(x)
     topy = maximum(y)
-  #  axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
-#   axisx_tag = axisx.update((-1,-1), (-1,1), (1,1))
+    axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
+   axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
+    axisy = Line([(0,0), (0,1), (0,1)],:blue)
+    axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
     x = [z = z / topx for z in x]
     y = [z = z / topy for z in y]
-    expression = string("compose(context()", ",")
+    expression = string("compose(context()", ",", axisx_tag, axisy_tag)
     # Coordinate parsing -------
     for (i, w) in zip(x, y)
         exp = shape.update(i,w)
@@ -30,6 +33,9 @@ function Scatter(x,y,shape,debug=false)
     show() = composition
     tree() = introspect(composition)
     (var)->(show;composition;tree)
+end
+function Grid(preset=nothing,x=nothing,y=nothing)
+
 end
 #---------------------------
 end

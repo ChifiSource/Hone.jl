@@ -8,7 +8,8 @@ module Hone
 using Compose
 include("HPlot.jl")
 include("HDraw.jl")
-
+# \\\\ Exports \\\\
+export Line, Circle, Scatter
 
 # =====================================
 end
