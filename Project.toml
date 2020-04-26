@@ -1,6 +1,6 @@
 authors = ["emmett emmett@emmettboudreau.com"]
 name = "Hone"
-uuid = "12ccbac0-7b66-11ea-0cc2-7bbb5c90c0eb
+uuid = "12ccbac0-7b66-11ea-0cc2-7bbb5c90c0eb"
 version = "0.0.1"
 [deps]
 Lathe = "38d8eb38-e7b1-11e9-0012-376b6c802672"
