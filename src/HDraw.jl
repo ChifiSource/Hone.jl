@@ -1,4 +1,5 @@
 module HDraw
+using Compose
 @doc """Line\n
 -------------------------------\n
 The circle object creates a drawable scalable vector graphic circle.\n

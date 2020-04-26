@@ -2,7 +2,8 @@ module HPlot
 #==
 \/\/\Parts/\/\/
 ==#
-include("HDraw.jl")
+using HDraw: Line
+using Compose
 @doc """Scatter\n
 -------------------------------\n
 The Scatter function will create an object that stores meta information related to the contents of the scatterplot, and then parse coordinates and draw lines to create the plot.\n
@@ -32,6 +33,9 @@ function Scatter(x,y,shape,debug=false)
     show() = composition
     tree() = introspect(composition)
     (var)->(show;composition;tree)
+end
+function Grid(preset=nothing,x=nothing,y=nothing)
+
 end
 #---------------------------
 end
