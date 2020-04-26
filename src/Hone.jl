@@ -9,8 +9,7 @@ using Compose
 include("HPlot.jl")
 include("HDraw.jl")
 # \\\\ Exports \\\\
-import Line
-export Line
+export Line, Circle, Scatter
 
 # =====================================
 end

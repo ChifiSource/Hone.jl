@@ -1,4 +1,3 @@
-module HPlot
 #==
 \/\/\Parts/\/\/
 ==#
@@ -38,4 +37,3 @@ function Grid(preset=nothing,x=nothing,y=nothing)
 
 end
 #---------------------------
-end

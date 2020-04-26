@@ -1,4 +1,3 @@
-module HDraw
 using Compose
 @doc """Line\n
 -------------------------------\n
@@ -42,4 +41,3 @@ function Circle(x,y,diameter,fillin)
     (var)->(show;composition;tree;tag;x;y;update;diameter)
 end
 #---------------------------------------------------
-end
