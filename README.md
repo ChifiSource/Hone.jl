@@ -1,6 +1,6 @@
 <div align="center"><img src="https://github.com/emmettgb/Hone.jl/blob/Unstable/hone.png" />
 
-# Version 0.0.1
+# Version 0.0.2
 - Modular shapes, grids, and lines
 - Easy prefabs
 - Fast plotting
