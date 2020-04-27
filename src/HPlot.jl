@@ -11,22 +11,22 @@ x:: An Array of X coordinates.\n
 y:: An array of corresponding Y coordinates\n
 shape:: Takes a Hone.jl Shape object.\n
 big = Scatter(x,y,shape)"""
-function Scatter(x,y,shape,debug=false)
+function _arrayscatter(x,y,shape,debug=false)
    topx = maximum(x)
     topy = maximum(y)
     axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
    axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
     axisy = Line([(0,0), (0,1), (0,1)],:blue)
     axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
-    x = [z = z / topx for z in x]
-    y = [z = z / topy for z in y]
-    expression = string("compose(context()", ",", axisx_tag, axisy_tag)
+    expression = string("compose(context(), (context(),", axisx_tag, axisy_tag,"), (context(),")
     # Coordinate parsing -------
     for (i, w) in zip(x, y)
-        exp = shape.update(i,w)
+        inputx = i / topx
+        inputy = w / topy
+        exp = shape.update(inputx,inputy)
         expression = string(expression,string(exp))
     end
-    expression = Meta.parse(string(expression,")"))
+    expression = Meta.parse(string(expression,"))"))
     if debug == true println(expression) end
     composition = eval(expression)
     show() = composition
@@ -58,4 +58,37 @@ function Grid(divisions,colorx=:lightblue,colory=:lightblue,thickness=.02)
     show() = eval(expression)
     (var)->(show)
 end
+function _dfscatter(x,y,shape,debug=false)
+    topy = maximum(x[y])
+    axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
+   axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
+    axisy = Line([(0,0), (0,1), (0,1)],:blue)
+    axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
+    expression = string("compose(context()", ",", axisx_tag, axisy_tag)
+    # Coordinate parsing -------
+    y = x[y]
+    counter = 0
+    for col in eachcol(x, false)
+        counter = counter + 1
+        topx = maximum(col)
+       if col !=  y
+            for (i, w) in zip(col, y)
+                expression = string(expression, "(context(), ")
+                current_shape = shape[counter]
+                inputx = i / topx
+                inputy = w / topy
+                exp = current_shape.update(inputx,inputy)
+                expression = string(expression,string(exp),"),")
+            end
+        end
+    end
+    expression = Meta.parse(string(expression,")"))
+    if debug == true println(expression) end
+    composition = eval(expression)
+    show() = composition
+    tree() = introspect(composition)
+    (var)->(show;composition;tree)
+end
+Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
+Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
 #---------------------------
