@@ -33,7 +33,29 @@ function Scatter(x,y,shape,debug=false)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
-function Grid(preset=nothing,x=nothing,y=nothing)
-
+function Grid(divisions,colorx=:lightblue,colory=:lightblue,thickness=.02)
+    division_amount = 1 / divisions
+    total = 0
+    Xexpression = "(context(), "
+    while total < 1
+        total = total + division_amount
+        linedraw = Line([(0,total),(1,total)],colorx,thickness)
+        exp = linedraw.update(:hi)
+        Xexpression = string(Xexpression,exp)
+    end
+    Xexpression = string(Xexpression, "),")
+    total = 0
+    Yexpression = ",(context(), "
+    while total < 1
+        total = total + division_amount
+        linedraw = Line([(total,0),(total,1)],colory,thickness)
+        exp = linedraw.update(:hi)
+        Yexpression = string(Yexpression,exp)
+    end
+    Yexpression = string(Yexpression, "),")
+    composexp = string("compose(context(), ",Xexpression, Yexpression,")")
+    expression = Meta.parse(composexp)
+    show() = eval(expression)
+    (var)->(show)
 end
 #---------------------------
