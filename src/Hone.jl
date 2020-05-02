@@ -8,8 +8,9 @@ module Hone
 using Compose
 include("HPlot.jl")
 include("HDraw.jl")
+include("HControl.jl")
 # \\\\ Exports \\\\
-export Line, Circle, Scatter, Rectangle
+export Line, Circle, Scatter, Rectangle, Grid, Frame
 
 # =====================================
 end
