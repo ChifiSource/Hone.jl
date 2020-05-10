@@ -1,9 +1,10 @@
 authors = ["emmett emmett@emmettboudreau.com"]
 name = "Hone"
 uuid = "12ccbac0-7b66-11ea-0cc2-7bbb5c90c0eb"
-version = "0.0.1"
+version = "0.0.2"
 [deps]
 Lathe = "38d8eb38-e7b1-11e9-0012-376b6c802672"
 Compose = "a81c6b42-2e10-5240-aca2-a61377ecd94b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 [compat]
 julia = "1.0.3"
