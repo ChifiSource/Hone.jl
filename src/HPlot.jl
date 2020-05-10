@@ -13,20 +13,16 @@ x:: An Array of X coordinates.\n
 y:: An array of corresponding Y coordinates\n
 shape:: Takes a Hone.jl Shape object.\n
 big = Scatter(x,y,shape)"""
-function _arrayscatter(x,y,shape=Circle(.5,.5,.5),axiscolor=:lightblue,
-        debug=false, grid=Grid(4), custom="", frame=Frame(1,1,20mm,0mm,0mm,20mm))
+function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
+        debug=false, grid=Grid(4), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
     topy = maximum(y)
-    axisx = Line([(-1,-1), (-1,1), (1,1)],axiscolor)
+    axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
    axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
-    axisy = Line([(0,0), (0,1), (0,1)],axiscolor)
+    axisy = Line([(0,0), (0,frame.height)],axiscolor)
     axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
     grid_tag = grid.update()
     ######
-    frame_width = frame.width - 20
-    frame_height = frame.height - 20
-    w_mod = frame_width / topx
-    h_mod = frame_height / topy
     ######
     fullcustom = ""
     if custom != ""
@@ -35,8 +31,8 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,.5),axiscolor=:lightblue,
     expression = string("")
     # Coordinate parsing -------
     for (i, w) in zip(x, y)
-        inputx = i / topx
-        inputy = w / topy
+        inputx = (i / topx) * frame.width
+        inputy = (w / topy) * frame.height
         exp = shape.update(inputx,inputy)
         expression = string(expression,string(exp))
     end
@@ -48,32 +44,40 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,.5),axiscolor=:lightblue,
     show() = frame.show()
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
-    (var)->(show;composition;tree;save)
+    get_frame() = frame
+    (var)->(show;composition;tree;save;get_frame)
 end
-function Grid(divisions,colorx=:lightblue,colory=:lightblue,thickness=.02)
-    division_amount = 1 / divisions
+mutable struct transfertype
+   tag
+end
+function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.3)
+    division_amountx = xlen / divisions
+    division_amounty = ylen / divisions
     total = 0
     Xexpression = "(context(), "
-    while total < 1
-        total = total + division_amount
-        linedraw = Line([(0,total),(1,total)],colorx,thickness)
-        exp = linedraw.update(:hi)
-        Xexpression = string(Xexpression,exp)
+    while total < xlen
+        total = total + division_amountx
+        linedraw = Line([(0,total),(1,total)],:lightblue,thickness)
+        exp = linedraw.update(:This_symbol_means_nothing)
+        Xexpression = string(Xexpression,string(exp))
     end
     Xexpression = string(Xexpression, "),")
     total = 0
-    Yexpression = ",(context(), "
-    while total < 1
-        total = total + division_amount
-        linedraw = Line([(total,0),(total,1)],colory,thickness)
+    Yexpression = "(context(),"
+    while total < ylen
+        total = total + division_amounty
+        linedraw = Line([(total,0),(total,1)],:lightblue,thickness)
         exp = linedraw.update(:hi)
-        Yexpression = string(Yexpression,exp)
+        Yexpression = string(Yexpression,string(exp))
     end
-    Yexpression = string(Yexpression, "),")
-    composexp = string("compose(context(), ",Xexpression, Yexpression,")")
-    expression = Meta.parse(composexp)
-    show() = eval(expression)
-    (var)->(show)
+    composexp = string(string(Xexpression), string(Yexpression),"),")
+    vv = Meta.parse(string("compose(context(),",composexp,")"))
+    composition = eval(vv)
+    save(name) = draw(SVG(name), composition);
+    update() = string(composexp)
+    show() = composition
+    tag() = composexp
+    (var)->(update;composexp;show;save;tag)
 end
 function _dfscatter(x,y,shape,debug=false)
     topy = maximum(x[y])
@@ -106,6 +110,7 @@ function _dfscatter(x,y,shape,debug=false)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
+
 Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
 Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
 #---------------------------
