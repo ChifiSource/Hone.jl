@@ -43,6 +43,24 @@ end
 mutable struct transfertype
    tag
 end
+@doc """Grid\n
+The Grid function constructs a Grid type using percentages based on canvas sizes and divisions.\n
+-------------------------------\n
+======== PARAMETERS ======
+(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)\n
+divisions:: An Int64 that determines the number of lines the grid will contain.\n
+xlen:: An Int64 or Float64 representing the width of the canvas or area.\n
+ylen:: An Int64 or Float64 representing the height of the canvas or area.\n
+colorx:: A Hone Color symbol that will determine the color of the lines drawn on
+the x axis. For more information on Hone Colors, refer to ?(HoneColors).\n
+colory:: A Hone Color symbol that will determine the color of the lines drawn on
+the y axis. For more information on Hone Colors, refer to ?(HoneColors).\n
+thickness:: Will determine the width of each line in the grid.
+--------------------------------\n
+========= METHODS ========\n
+Grid.show() - Shows the Grid's composition.\n
+Grid.update() - Returns the Grid's Meta-tag.\n
+Grid.save(URI) - Saves Grid as a Scalable Vector Graphic (SVG) File in the provided URI"""
 function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)
     division_amountx = xlen / divisions
     division_amounty = ylen / divisions
