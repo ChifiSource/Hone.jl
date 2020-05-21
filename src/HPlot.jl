@@ -173,5 +173,5 @@ Line.tree() - Shows an introspection of contexts contained in the plot's composi
 Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
 Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
-Line(x::DataFrame,y::Symbool,shape) = _dfline(x,y,shape)
+Line(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
 #---------------------------
