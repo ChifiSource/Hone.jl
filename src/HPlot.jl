@@ -153,7 +153,7 @@ Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
 The Line function takes either a DataFrame and Symbol OR two Arrays and returns
      a Hone line plot object.\n
 -------------------------------\n
-======== PARAMETERS ======
+======== PARAMETERS ======\n
 (x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
 x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
 y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
@@ -167,11 +167,23 @@ custom:: Custom takes a meta expression (as a an unparsed string), and can be us
  to a plot.\n
  frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
 --------------------------------\n
-========= METHODS ========
+========= METHODS ========\n
 Line.show() - Displays the frame which contains the plot's composition.\n
 Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
 Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
 Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
 Line(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
+@doc """Colors\n
+You can use HoneColors(color) to view a color.\n
+color:: Symbol used to represent the desired color.\n
+----------------------------------------------\n
+========== COLORS ============\n
+:blue, :green, :lightblue, :pink, :orange, :red, :black, :gray, :white, :yellow,
+ :purple, :magenta, :lime
+"""
+function HoneColors(color)
+    d = Circle(.5,.5,.5,color)
+    d.show()
+end
 #---------------------------
