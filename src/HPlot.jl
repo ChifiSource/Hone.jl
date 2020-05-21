@@ -14,7 +14,7 @@ y:: An array of corresponding Y coordinates\n
 shape:: Takes a Hone.jl Shape object.\n
 big = Scatter(x,y,shape)"""
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
-        debug=false, grid=Grid(4), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+        debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
     topy = maximum(y)
     axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
@@ -50,14 +50,14 @@ end
 mutable struct transfertype
    tag
 end
-function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.3)
+function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)
     division_amountx = xlen / divisions
     division_amounty = ylen / divisions
     total = 0
     Xexpression = "(context(), "
     while total < xlen
         total = total + division_amountx
-        linedraw = Line([(0,total),(1,total)],:lightblue,thickness)
+        linedraw = Line([(0,total),(xlen,total)],:lightblue,thickness)
         exp = linedraw.update(:This_symbol_means_nothing)
         Xexpression = string(Xexpression,string(exp))
     end
@@ -66,7 +66,7 @@ function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,t
     Yexpression = "(context(),"
     while total < ylen
         total = total + division_amounty
-        linedraw = Line([(total,0),(total,1)],:lightblue,thickness)
+        linedraw = Line([(total,0),(total,ylen)],:lightblue,thickness)
         exp = linedraw.update(:hi)
         Yexpression = string(Yexpression,string(exp))
     end
@@ -110,7 +110,25 @@ function _dfscatter(x,y,shape,debug=false)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
-
+function _arrayline(x,y,color=:orange,weight=50,axiscolor=:lightblue,
+    grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+    pairs = []
+    topy = maximum(y)
+    topx = maximum(x)
+    for (i,w) in zip(x,y)
+        push!(pairs,[(i * topx / frame.width)=>(w * topy / frame.height)])
+    end
+    lin = Line(pairs,color,weight)
+    expression = string("(context(),",lin.update(:foo),")")
+    tt = transfertype(expression)
+    frame.add([tt])
+    show() = frame.show()
+    tree() = introspect(composition)
+    save(name) = draw(SVG(name), composition);
+    get_frame() = frame
+    (var)->(show;composi15tion;tree;save;get_frame)
+end
 Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
 Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
+Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
 #---------------------------
