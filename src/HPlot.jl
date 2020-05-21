@@ -5,14 +5,7 @@ include("HControl.jl")
 include("HDraw.jl")
 using Compose
 using DataFrames
-@doc """Scatter\n
--------------------------------\n
-The Scatter function will create an object that stores meta information related to the contents of the scatterplot, and then parse coordinates and draw lines to create the plot.\n
-Scatter(x,y,shape)\n
-x:: An Array of X coordinates.\n
-y:: An array of corresponding Y coordinates\n
-shape:: Takes a Hone.jl Shape object.\n
-big = Scatter(x,y,shape)"""
+
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
         debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
@@ -126,9 +119,59 @@ function _arrayline(x,y,color=:orange,weight=50,axiscolor=:lightblue,
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
-    (var)->(show;composi15tion;tree;save;get_frame)
+    (var)->(show;composition;tree;save;get_frame)
 end
+function _dfline(x,y,shape)
+
+end
+    @doc """Scatter\n
+    The Scatter function takes either a DataFrame and Symbol OR two Arrays and returns
+         a Hone scatter plot object.\n
+    -------------------------------\n
+    ======== PARAMETERS ======
+    (x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
+    x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+    y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+    shape:: Takes a Hone.jl Shape object OR an iterable list of shapes with the same length as the number of X's
+    in the provided DataFrame, or X\n
+    axiscolor:: Symbol representing the color of both the X and Y axis's. For more information on available colors, please
+    use ?(HoneColors)\n
+    debug:: Boolean that determines whether or not the function will print the meta expression on creation.\n
+    grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+    custom:: Custom takes a meta expression (as a an unparsed string), and can be used to add customizable features
+     to a plot.\n
+     frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
+    --------------------------------\n
+    ========= METHODS ========
+    Line.show() - Displays the frame which contains the plot's composition.\n
+    Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
+    Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
+    Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
 Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
+@doc """Line\n
+The Line function takes either a DataFrame and Symbol OR two Arrays and returns
+     a Hone line plot object.\n
+-------------------------------\n
+======== PARAMETERS ======
+(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
+x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+shape:: Takes a Hone.jl Shape object OR an iterable list of shapes with the same length as the number of X's
+in the provided DataFrame, or X\n
+axiscolor:: Symbol representing the color of both the X and Y axis's. For more information on available colors, please
+use ?(HoneColors)\n
+debug:: Boolean that determines whether or not the function will print the meta expression on creation.\n
+grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+custom:: Custom takes a meta expression (as a an unparsed string), and can be used to add customizable features
+ to a plot.\n
+ frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
+--------------------------------\n
+========= METHODS ========
+Line.show() - Displays the frame which contains the plot's composition.\n
+Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
+Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
+Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
+Line(x::DataFrame,y::Symbool,shape) = _dfline(x,y,shape)
 #---------------------------
