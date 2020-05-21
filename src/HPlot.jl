@@ -46,7 +46,7 @@ end
 @doc """Grid\n
 The Grid function constructs a Grid type using percentages based on canvas sizes and divisions.\n
 -------------------------------\n
-======== PARAMETERS ======
+======== PARAMETERS ======\n
 (divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)\n
 divisions:: An Int64 that determines the number of lines the grid will contain.\n
 xlen:: An Int64 or Float64 representing the width of the canvas or area.\n
@@ -146,7 +146,7 @@ end
     The Scatter function takes either a DataFrame and Symbol OR two Arrays and returns
          a Hone scatter plot object.\n
     -------------------------------\n
-    ======== PARAMETERS ======
+    ======== PARAMETERS ======\n
     (x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
     x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
     y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
@@ -160,7 +160,7 @@ end
      to a plot.\n
      frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
     --------------------------------\n
-    ========= METHODS ========
+    ========= METHODS ========\n
     Line.show() - Displays the frame which contains the plot's composition.\n
     Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
     Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
