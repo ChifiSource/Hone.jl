@@ -5,16 +5,9 @@ include("HControl.jl")
 include("HDraw.jl")
 using Compose
 using DataFrames
-@doc """Scatter\n
--------------------------------\n
-The Scatter function will create an object that stores meta information related to the contents of the scatterplot, and then parse coordinates and draw lines to create the plot.\n
-Scatter(x,y,shape)\n
-x:: An Array of X coordinates.\n
-y:: An array of corresponding Y coordinates\n
-shape:: Takes a Hone.jl Shape object.\n
-big = Scatter(x,y,shape)"""
+
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
-        debug=false, grid=Grid(4), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+        debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
     topy = maximum(y)
     axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
@@ -50,14 +43,32 @@ end
 mutable struct transfertype
    tag
 end
-function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.3)
+@doc """Grid\n
+The Grid function constructs a Grid type using percentages based on canvas sizes and divisions.\n
+-------------------------------\n
+======== PARAMETERS ======
+(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)\n
+divisions:: An Int64 that determines the number of lines the grid will contain.\n
+xlen:: An Int64 or Float64 representing the width of the canvas or area.\n
+ylen:: An Int64 or Float64 representing the height of the canvas or area.\n
+colorx:: A Hone Color symbol that will determine the color of the lines drawn on
+the x axis. For more information on Hone Colors, refer to ?(HoneColors).\n
+colory:: A Hone Color symbol that will determine the color of the lines drawn on
+the y axis. For more information on Hone Colors, refer to ?(HoneColors).\n
+thickness:: Will determine the width of each line in the grid.
+--------------------------------\n
+========= METHODS ========\n
+Grid.show() - Shows the Grid's composition.\n
+Grid.update() - Returns the Grid's Meta-tag.\n
+Grid.save(URI) - Saves Grid as a Scalable Vector Graphic (SVG) File in the provided URI"""
+function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)
     division_amountx = xlen / divisions
     division_amounty = ylen / divisions
     total = 0
     Xexpression = "(context(), "
     while total < xlen
         total = total + division_amountx
-        linedraw = Line([(0,total),(1,total)],:lightblue,thickness)
+        linedraw = Line([(0,total),(xlen,total)],:lightblue,thickness)
         exp = linedraw.update(:This_symbol_means_nothing)
         Xexpression = string(Xexpression,string(exp))
     end
@@ -66,7 +77,7 @@ function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,t
     Yexpression = "(context(),"
     while total < ylen
         total = total + division_amounty
-        linedraw = Line([(total,0),(total,1)],:lightblue,thickness)
+        linedraw = Line([(total,0),(total,ylen)],:lightblue,thickness)
         exp = linedraw.update(:hi)
         Yexpression = string(Yexpression,string(exp))
     end
@@ -110,7 +121,87 @@ function _dfscatter(x,y,shape,debug=false)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
+function _arrayline(x,y,color=:orange,weight=50,axiscolor=:lightblue,
+    grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+    pairs = []
+    topy = maximum(y)
+    topx = maximum(x)
+    for (i,w) in zip(x,y)
+        push!(pairs,[(i * topx / frame.width)=>(w * topy / frame.height)])
+    end
+    lin = Line(pairs,color,weight)
+    expression = string("(context(),",lin.update(:foo),")")
+    tt = transfertype(expression)
+    frame.add([tt])
+    show() = frame.show()
+    tree() = introspect(composition)
+    save(name) = draw(SVG(name), composition);
+    get_frame() = frame
+    (var)->(show;composition;tree;save;get_frame)
+end
+function _dfline(x,y,shape)
 
+end
+    @doc """Scatter\n
+    The Scatter function takes either a DataFrame and Symbol OR two Arrays and returns
+         a Hone scatter plot object.\n
+    -------------------------------\n
+    ======== PARAMETERS ======
+    (x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
+    x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+    y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+    shape:: Takes a Hone.jl Shape object OR an iterable list of shapes with the same length as the number of X's
+    in the provided DataFrame, or X\n
+    axiscolor:: Symbol representing the color of both the X and Y axis's. For more information on available colors, please
+    use ?(HoneColors)\n
+    debug:: Boolean that determines whether or not the function will print the meta expression on creation.\n
+    grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+    custom:: Custom takes a meta expression (as a an unparsed string), and can be used to add customizable features
+     to a plot.\n
+     frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
+    --------------------------------\n
+    ========= METHODS ========
+    Line.show() - Displays the frame which contains the plot's composition.\n
+    Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
+    Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
+    Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
 Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
+@doc """Line\n
+The Line function takes either a DataFrame and Symbol OR two Arrays and returns
+     a Hone line plot object.\n
+-------------------------------\n
+======== PARAMETERS ======\n
+(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
+x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+shape:: Takes a Hone.jl Shape object OR an iterable list of shapes with the same length as the number of X's
+in the provided DataFrame, or X\n
+axiscolor:: Symbol representing the color of both the X and Y axis's. For more information on available colors, please
+use ?(HoneColors)\n
+debug:: Boolean that determines whether or not the function will print the meta expression on creation.\n
+grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+custom:: Custom takes a meta expression (as a an unparsed string), and can be used to add customizable features
+ to a plot.\n
+ frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
+--------------------------------\n
+========= METHODS ========\n
+Line.show() - Displays the frame which contains the plot's composition.\n
+Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
+Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
+Line.get_frame() - Returns the frame which contains the plot as a child object."""
+Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
+Line(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
+@doc """Colors\n
+You can use HoneColors(color) to view a color.\n
+color:: Symbol used to represent the desired color.\n
+----------------------------------------------\n
+========== COLORS ============\n
+:blue, :green, :lightblue, :pink, :orange, :red, :black, :gray, :white, :yellow,
+ :purple, :magenta, :lime
+"""
+function HoneColors(color)
+    d = Circle(.5,.5,.5,color)
+    d.show()
+end
 #---------------------------
