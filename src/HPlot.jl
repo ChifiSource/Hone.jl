@@ -197,8 +197,8 @@ Line.show() - Displays the frame which contains the plot's composition.\n
 Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
 Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
 Line.get_frame() - Returns the frame which contains the plot as a child object."""
-Line(x::Array,y::Array,shape) = _arrayline(x,y,shape)
-Line(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
+Linear(x::Array,y::Array,shape) = _arrayline(x,y,shape)
+Linear(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
 @doc """Colors\n
 You can use HoneColors(color) to view a color.\n
 color:: Symbol used to represent the desired color.\n
