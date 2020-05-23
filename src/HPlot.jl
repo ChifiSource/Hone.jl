@@ -121,23 +121,30 @@ function _dfscatter(x,y,shape,debug=false)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
-function _arrayline(x,y,color=:orange,weight=50,axiscolor=:lightblue,
+function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
     pairs = []
     topy = maximum(y)
     topx = maximum(x)
     for (i,w) in zip(x,y)
-        push!(pairs,[(i * topx / frame.width)=>(w * topy / frame.height)])
+        x = (i / topx * frame.width)
+        y = (w / topy * frame.height)
+        pair = Tuple([x,y])
+        push!(pairs,pair)
     end
+    pairs = Array{Tuple{Float64,Real},1}(pairs)
     lin = Line(pairs,color,weight)
-    expression = string("(context(),",lin.update(:foo),")")
+    axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
+    axisy = Line([(0,0), (0,frame.height)],axiscolor)
+    expression = string("(context(),",lin.update(:foo),"), (context(), ",grid.update(),
+    "), (context(), ",axisx.update(:foo),axisy.update(:foo),")")
     tt = transfertype(expression)
     frame.add([tt])
     show() = frame.show()
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
-    (var)->(show;composition;tree;save;get_frame)
+    (var)->(show;composi15tion;tree;save;get_frame)
 end
 function _dfline(x,y,shape)
 
