@@ -7,7 +7,7 @@ using Compose
 using DataFrames
 
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
-        debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+        debug=false, grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
     topy = maximum(y)
     axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
@@ -17,10 +17,6 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
     grid_tag = grid.update()
     ######
     ######
-    fullcustom = ""
-    if custom != ""
-        [custom = string(fullcustom, i) for i in custom]
-    end
     expression = string("")
     # Coordinate parsing -------
     for (i, w) in zip(x, y)
@@ -29,9 +25,9 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
         exp = shape.update(inputx,inputy)
         expression = string(expression,string(exp))
     end
-    expression = string(expression, "(context(),", axisx_tag,grid_tag,custom, axisy_tag,"),")
+    expression = string(expression, "(context(),", axisx_tag,grid_tag, axisy_tag,"),")
     tt = transfertype(expression)
-    frame.add([tt])
+    frame.add(tt)
     if debug == true println(expression) end
     composition = eval(expression)
     show() = frame.show()
@@ -122,7 +118,7 @@ function _dfscatter(x,y,shape,debug=false)
     (var)->(show;composition;tree)
 end
 function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
-    grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+    grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
     pairs = []
     topy = maximum(y)
     topx = maximum(x)
@@ -144,7 +140,7 @@ function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
-    (var)->(show;composi15tion;tree;save;get_frame)
+    (var)->(show;composition;tree;save;get_frame)
 end
 function _dfline(x,y,shape)
 
