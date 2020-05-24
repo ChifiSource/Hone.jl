@@ -7,7 +7,7 @@ using Compose
 using DataFrames
 
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
-        debug=false, grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+     grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
    topx = maximum(x)
     topy = maximum(y)
     axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
@@ -34,6 +34,7 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
+    add(obj) = frame.add(obj)
     (var)->(show;composition;tree;save;get_frame)
 end
 mutable struct transfertype
@@ -86,7 +87,9 @@ function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,t
     tag() = composexp
     (var)->(update;composexp;show;save;tag)
 end
-function _dfscatter(x,y,shape,debug=false)
+function _dfscatter(x, y, shape, axiscolor=:lightblue, grid=Grid(3),
+    frame=Frame(Frame(1280, 720, 0mm, 0mm, 0mm, 0mm))
+    )
     topy = maximum(x[y])
     axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
    axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
@@ -103,17 +106,19 @@ function _dfscatter(x,y,shape,debug=false)
             for (i, w) in zip(col, y)
                 expression = string(expression, "(context(), ")
                 current_shape = shape[counter]
-                inputx = i / topx
-                inputy = w / topy
+                inputx = (i / topx) * frame.width
+                inputy = (w / topy) * frame.height
                 exp = current_shape.update(inputx,inputy)
                 expression = string(expression,string(exp),"),")
             end
         end
     end
-    expression = Meta.parse(string(expression,")"))
-    if debug == true println(expression) end
+    expression = string(expression,")")
+    tt = transfertype(expression)
+    frame.add(expression)
     composition = eval(expression)
-    show() = composition
+    show() = frame.show()
+    add(obj) = frame.add(obj)
     tree() = introspect(composition)
     (var)->(show;composition;tree)
 end
