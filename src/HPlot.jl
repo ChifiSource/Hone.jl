@@ -34,7 +34,7 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
     add(obj) = frame.add(obj)
-    (var)->(show;composition;tree;save;get_frame)
+    (var)->(show;composition;tree;save;get_frame;add;x;y)
 end
 mutable struct transfertype
    tag
@@ -119,7 +119,7 @@ function _dfscatter(x, y, shape, axiscolor=:lightblue, grid=Grid(3),
     show() = frame.show()
     add(obj) = frame.add(obj)
     tree() = introspect(composition)
-    (var)->(show;composition;tree)
+    (var)->(show;composition;tree;x;y)
 end
 function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
