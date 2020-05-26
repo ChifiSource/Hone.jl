@@ -172,8 +172,8 @@ end
     Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
     Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
     Line.get_frame() - Returns the frame which contains the plot as a child object."""
-Scatter(x::DataFrame,y::Symbol,shape::Array,axiscolor) = _dfscatter(x,y,shape,debug)
-Scatter(x::Array,y::Array,shape) = _arrayscatter(x,y,shape,debug)
+Scatter(x::DataFrame,y::Symbol,shape::Array,axiscolor) = _dfscatter(x,y,shape,axiscolor)
+Scatter(x::Array,y::Array,shape,axiscolor) = _arrayscatter(x,y,shape,axiscolor)
 @doc """Line\n
 The Line function takes either a DataFrame and Symbol OR two Arrays and returns
      a Hone line plot object.\n
