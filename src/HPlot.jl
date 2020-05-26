@@ -28,7 +28,6 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
     expression = string(expression, "(context(),", axisx_tag,grid_tag, axisy_tag,"),")
     tt = transfertype(expression)
     frame.add(tt)
-    if debug == true println(expression) end
     composition = eval(expression)
     show() = frame.show()
     tree() = introspect(composition)
@@ -173,8 +172,8 @@ end
     Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
     Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
     Line.get_frame() - Returns the frame which contains the plot as a child object."""
-Scatter(x::DataFrame,y::Symbol,shape::Array,debug) = _dfscatter(x,y,shape,debug)
-Scatter(x::Array,y::Array,shape,debug) = _arrayscatter(x,y,shape,debug)
+Scatter(x::DataFrame,y::Symbol,shape::Array,axiscolor) = _dfscatter(x,y,shape,debug)
+Scatter(x::Array,y::Array,shape) = _arrayscatter(x,y,shape,debug)
 @doc """Line\n
 The Line function takes either a DataFrame and Symbol OR two Arrays and returns
      a Hone line plot object.\n
