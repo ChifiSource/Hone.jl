@@ -1,24 +1,33 @@
 <div align="center"><img src="https://github.com/emmettgb/Hone.jl/blob/0.0.2/hone.gif" />
 
-# Version 0.0.3
-- Modular shapes, grids, and lines
+# Version 0.0.4
+- Modular graphics
 - Easy prefabs
 - Fast plotting
 - Simple and Light
-- Lathe Integration (coming soon)
-- Statistical Plotting (coming soon)
 - 100% Julia code
 - Meta Data
-### HPlot
+### Graphs
 ```julia
-using Hone.HPlot: Scatter
+using Hone
 ?(Scatter)
-using Hone.HPlot: Grid
+?(Linear)
+```
+### Shapes
+```julia
+using Hone
+?(Line)
+?(Circle)
+?(Rectangle)
+?(Text)
+```
+### Control
+```julia
+using Hone
+?(Frame)
+```
+### Accessory
+```julia
+using Hone
 ?(Grid)
 ```
-### HDraw
-```julia
-using Hone.HDraw: Line
-?(Line)
-using Hone.HDraw: Circle
-?(Circle)
