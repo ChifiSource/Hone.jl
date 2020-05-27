@@ -51,12 +51,14 @@ function Rectangle(x,y,width,height,fillin=:blue)
     update(x,y) =  string("rectangle(",string(x),",",string(y),',',width,',',height, "), fill(", color , "),")
     (var)->(show;composition;tree;tag;x;y;update;diameter)
 end
-function Text(label,x,y,stroke,size)
-    color = string("\"",string(stroke),"\"")
+function Label(label,x,y,stroke="",size=5,fill=:gray)
+    if stroke != ""
+        stroke = string("stroke(","\"",string(stroke),"\"","),")
+    end
+    fill = string("\"", string(fill), "\"")
     label = string("\"",string(label),"\"")
     tag = string("text(",x, ",", y, ",", label, ",hcenter, vcenter),",
-        "stroke(", color,
-        "), fontsize(", size, "),")
+           stroke," fontsize(", size, "), fill(", fill, "),")
     expression = string("compose(context(), ",tag,")")
     exp = Meta.parse(expression)
     show() = eval(exp)
