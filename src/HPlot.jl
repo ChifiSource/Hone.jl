@@ -8,11 +8,14 @@ using DataFrames
 
 function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
      grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+    buffer = 90
+    fheight = frame.height - buffer
+    fwidth = frame.width - buffer
    topx = maximum(x)
     topy = maximum(y)
-    axisx = Line([(0,frame.height), (frame.width,frame.height)],axiscolor)
+    axisx = Line([(buffer,fheight), (fwidth,fheight)],axiscolor)
    axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
-    axisy = Line([(0,0), (0,frame.height)],axiscolor)
+    axisy = Line([(buffer,0), (buffer,fheight)],axiscolor)
     axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
     grid_tag = grid.update()
     ######
@@ -20,8 +23,8 @@ function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
     expression = string("")
     # Coordinate parsing -------
     for (i, w) in zip(x, y)
-        inputx = (i / topx) * frame.width
-        inputy = (w / topy) * frame.height
+        inputx = (i / topx) * fwidth
+        inputy = (w / topy) * fheight
         exp = shape.update(inputx,inputy)
         expression = string(expression,string(exp))
     end
@@ -57,7 +60,9 @@ thickness:: Will determine the width of each line in the grid.
 Grid.show() - Shows the Grid's composition.\n
 Grid.update() - Returns the Grid's Meta-tag.\n
 Grid.save(URI) - Saves Grid as a Scalable Vector Graphic (SVG) File in the provided URI"""
-function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,thickness=.2)
+function Grid(divisions,frame=Frame(1280,720,0mm,0mm,0mm,0mm),colorx=:lightblue,colory=:lightblue,thickness=.2)
+    xlen = frame.width
+    ylen = frame.height
     division_amountx = xlen / divisions
     division_amounty = ylen / divisions
     total = 0
@@ -73,6 +78,7 @@ function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,t
     Yexpression = "(context(),"
     while total < ylen
         total = total + division_amounty
+        println(total)
         linedraw = Line([(total,0),(total,ylen)],:lightblue,thickness)
         exp = linedraw.update(:hi)
         Yexpression = string(Yexpression,string(exp))
@@ -84,7 +90,7 @@ function Grid(divisions,xlen=1280,ylen=720,colorx=:lightblue,colory=:lightblue,t
     update() = string(composexp)
     show() = composition
     tag() = composexp
-    (var)->(update;composexp;show;save;tag)
+    (var)->(update;composexp;show;save;tag;division_amountx;division_amounty;frame;divisions)
 end
 function _dfscatter(x, y, shape, axiscolor=:lightblue, grid=Grid(3),
     frame=Frame(Frame(1280, 720, 0mm, 0mm, 0mm, 0mm))
@@ -139,7 +145,7 @@ function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     expression = string("(context(),",lin.update(:foo),"), (context(), ",grid.update(),
     "), (context(), ",axisx.update(:foo),axisy.update(:foo),")")
     tt = transfertype(expression)
-    frame.add([tt])
+    frame.add(tt)
     show() = frame.show()
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
@@ -210,5 +216,26 @@ color:: Symbol used to represent the desired color.\n
 function HoneColors(color)
     d = Circle(.5,.5,.5,color)
     d.show()
+end
+function GridLabels(x,y,grid,label,buffer=20)
+   frame = grid.frame
+    divamountx = grid.division_amountx
+    total = divamountx
+    topx = maximum(x)
+    topy = maximum(y)
+    xlabels = []
+    while total < (divamountx * grid.divisions)
+        xpercentage =  total / frame.width
+        curr_label = topy * xpercentage
+        push!(xlabels,(curr_label, total))
+        total += divamountx
+    end
+    xtags = ""
+    for (key,data) in xlabels
+        textlabel = Label(string(key), 40, data,:gray,3)
+        xtags = string(xtags, textlabel.tag)
+    end
+    tag = xtags
+    ()->(tag;xtags)
 end
 #---------------------------
