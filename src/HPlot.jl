@@ -10,10 +10,9 @@ function _arrayscatter(x, y,
         shape=Circle(.5,.5,25),
         grid = Grid(4),
         features = [Axis(:X), Axis(:Y)],
-        buffer = 90,
         frame=Frame(1280,720,0mm,0mm,0mm,0mm),
         )
-    points = Points(x, y, frame, buffer, shape)
+    points = Points(x, y, frame, shape)
     frame.add(points)
     glabels = GridLabels(x,y, grid)
     frame.add(grid)
