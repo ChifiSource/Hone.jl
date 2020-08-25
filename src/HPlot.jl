@@ -217,7 +217,7 @@ y:: An array of corresponding Y coordinates OR a Symbol representing which DataF
 grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
 --------------------------------\n
 """
-function GridLabels(x,y,grid,,buffer=20)
+function GridLabels(x,y,grid,buffer=20)
     frame = grid.frame
     divamounty = grid.division_amounty
     divamountx = grid.division_amountx
