@@ -216,7 +216,7 @@ y:: An array of corresponding Y coordinates OR a Symbol representing which DataF
 grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
 --------------------------------\n
 """
-function GridLabels(x,y,grid,buffer=20)
+function GridLabels(x,y,grid)
     frame = grid.frame
     divamounty = grid.division_amounty
     divamountx = grid.division_amountx
@@ -252,9 +252,9 @@ function GridLabels(x,y,grid,buffer=20)
     tag = string(xtags,ytags)
     ()->(tag;xtags;ytags)
 end
-function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), buffer = 0, shape=Circle(.5, .5, 25))
-    fheight = frame.height - buffer
-    fwidth = frame.width - buffer
+function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), shape=Circle(.5, .5, 25))
+    fheight = frame.height
+    fwidth = frame.width
     topx = maximum(x)
     topy = maximum(y)
    express = string("")
@@ -272,11 +272,11 @@ function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), buffer = 0, shape=C
     show() = eval(Meta.parse(string("compose(context(), ", tag,")")))
     (var)->(tag;show)
 end
-function Axis(orientation=:X, axiscolor = :gray, frame=Frame(1280,720,0mm,0mm,0mm,0mm), buffer = 0)
+function Axis(orientation=:X, axiscolor = :gray, frame=Frame(1280,720,0mm,0mm,0mm,0mm),)
     if orientation == :X
-        pairs = [(buffer,frame.height - buffer), (frame.width,frame.height - buffer)]
+        pairs = [(0,frame.height), (frame.width,frame.height)]
     else orientation == :Y
-        pairs = [(buffer,0),(buffer, frame.height - buffer)]
+        pairs = [(0,0),(0, frame.height)]
     end
     axis = Line(pairs,axiscolor)
     tag = axis.update([pairs])
