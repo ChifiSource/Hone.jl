@@ -207,7 +207,17 @@ function HoneColors(color)
     d = Circle(.5,.5,.5,color)
     d.show()
 end
-function GridLabels(x,y,grid,label = "X",buffer=20)
+@doc """GridLabels\n
+GridLabels provide labels to individual lines on the grid of your plot.\n
+-------------------------------\n
+======== PARAMETERS ======\n
+(x,y,grid)\n
+x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+--------------------------------\n
+"""
+function GridLabels(x,y,grid,,buffer=20)
     frame = grid.frame
     divamounty = grid.division_amounty
     divamountx = grid.division_amountx
