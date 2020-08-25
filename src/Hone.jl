@@ -6,7 +6,7 @@
 ==#
 module Hone
 using Compose
-using compose: mm
+using Compose: mm
 include("HPlot.jl")
 include("HDraw.jl")
 include("HControl.jl")
