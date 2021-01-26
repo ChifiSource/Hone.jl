@@ -6,38 +6,26 @@ include("HDraw.jl")
 using Compose
 using DataFrames
 
-function _arrayscatter(x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,
-     grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
-    buffer = 90
-    fheight = frame.height - buffer
-    fwidth = frame.width - buffer
-   topx = maximum(x)
-    topy = maximum(y)
-    axisx = Line([(buffer,fheight), (fwidth,fheight)],axiscolor)
-   axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
-    axisy = Line([(buffer,0), (buffer,fheight)],axiscolor)
-    axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
-    grid_tag = grid.update()
-    ######
-    ######
-    expression = string("")
-    # Coordinate parsing -------
-    for (i, w) in zip(x, y)
-        inputx = (i / topx) * fwidth
-        inputy = (w / topy) * fheight
-        exp = shape.update(inputx,inputy)
-        expression = string(expression,string(exp))
+function _arrayscatter(x, y,
+        shape=Circle(.5,.5,25),
+        grid = Grid(4),
+        features = [Axis(:X), Axis(:Y)],
+        frame=Frame(1280,720,0mm,0mm,0mm,0mm),
+        )
+    points = Points(x, y, frame, shape)
+    frame.add(points)
+    glabels = GridLabels(x,y, grid)
+    frame.add(grid)
+    frame.add(glabels)
+    for feature in features
+        frame.add(feature);
     end
-    expression = string(expression, "(context(),", axisx_tag,grid_tag, axisy_tag,"),")
-    tt = transfertype(expression)
-    frame.add(tt)
-    composition = eval(expression)
     show() = frame.show()
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition);
     get_frame() = frame
     add(obj) = frame.add(obj)
-    (var)->(show;composition;tree;save;get_frame;add;x;y)
+    (var)->(show;composition;tree;save;get_frame;add;x;y;points)
 end
 mutable struct transfertype
    tag
@@ -63,8 +51,8 @@ Grid.save(URI) - Saves Grid as a Scalable Vector Graphic (SVG) File in the provi
 function Grid(divisions,frame=Frame(1280,720,0mm,0mm,0mm,0mm),colorx=:lightblue,colory=:lightblue,thickness=.2)
     xlen = frame.width
     ylen = frame.height
-    division_amountx = xlen / divisions
-    division_amounty = ylen / divisions
+    division_amountx = ylen / divisions
+    division_amounty = xlen / divisions
     total = 0
     Xexpression = "(context(), "
     while total < xlen
@@ -89,9 +77,10 @@ function Grid(divisions,frame=Frame(1280,720,0mm,0mm,0mm,0mm),colorx=:lightblue,
     save(name) = draw(SVG(name), composition);
     update() = string(composexp)
     show() = composition
-    tag() = composexp
+    tag = composexp
     (var)->(update;composexp;show;save;tag;division_amountx;division_amounty;frame;divisions)
 end
+#--------
 function _dfscatter(x, y, shape, axiscolor=:lightblue, grid=Grid(3),
     frame=Frame(Frame(1280, 720, 0mm, 0mm, 0mm, 0mm))
     )
@@ -217,25 +206,80 @@ function HoneColors(color)
     d = Circle(.5,.5,.5,color)
     d.show()
 end
-function GridLabels(x,y,grid,label,buffer=20)
-   frame = grid.frame
+@doc """GridLabels\n
+GridLabels provide labels to individual lines on the grid of your plot.\n
+-------------------------------\n
+======== PARAMETERS ======\n
+(x,y,grid)\n
+x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
+y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
+grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
+--------------------------------\n
+"""
+function GridLabels(x,y,grid)
+    frame = grid.frame
+    divamounty = grid.division_amounty
     divamountx = grid.division_amountx
     total = divamountx
     topx = maximum(x)
     topy = maximum(y)
     xlabels = []
     while total < (divamountx * grid.divisions)
-        xpercentage =  total / frame.width
-        curr_label = topy * xpercentage
-        push!(xlabels,(curr_label, total))
+        percentage = total / frame.height
+        curr_label = topy * percentage
+        push!(xlabels,(curr_label, frame.height - total))
         total += divamountx
     end
     xtags = ""
     for (key,data) in xlabels
-        textlabel = Label(string(key), 40, data,:gray,3)
+        textlabel = Label(string(round(key)), 40 , data, "", 3)
         xtags = string(xtags, textlabel.tag)
     end
-    tag = xtags
-    ()->(tag;xtags)
+    # Ys
+    total = divamounty
+    ylabels = []
+    while total < (divamounty * grid.divisions)
+        percentage = total / frame.width
+        curr_label = topx * percentage
+        push!(ylabels,(curr_label, frame.width - total))
+        total += divamounty
+    end
+    ytags = ""
+    for (key,data) in ylabels
+        textlabel = Label(string(round(key)), frame.width - data ,frame.height - 40 , "", 3)
+        ytags = string(ytags, textlabel.tag)
+    end
+    tag = string(xtags,ytags)
+    ()->(tag;xtags;ytags)
+end
+function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), shape=Circle(.5, .5, 25))
+    fheight = frame.height
+    fwidth = frame.width
+    topx = maximum(x)
+    topy = maximum(y)
+   express = string("")
+    # Coordinate parsing -------
+    for (i, w) in zip(x, y)
+        inputx = (i / topx) * fwidth
+        inputy = (w / topy) * fheight
+        inputy = fheight - inputy
+        println(inputx)
+        println(inputy)
+        exp = shape.update(inputx,inputy)
+        express = string(express,string(exp))
+    end
+    tag = express
+    show() = eval(Meta.parse(string("compose(context(), ", tag,")")))
+    (var)->(tag;show)
+end
+function Axis(orientation=:X, axiscolor = :gray, frame=Frame(1280,720,0mm,0mm,0mm,0mm),)
+    if orientation == :X
+        pairs = [(0,frame.height), (frame.width,frame.height)]
+    else orientation == :Y
+        pairs = [(0,0),(0, frame.height)]
+    end
+    axis = Line(pairs,axiscolor)
+    tag = axis.update([pairs])
+    (var)->(tag)
 end
 #---------------------------

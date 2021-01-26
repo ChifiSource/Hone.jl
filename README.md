@@ -1,6 +1,6 @@
 <div align="center"><img src="https://github.com/emmettgb/Hone.jl/blob/0.0.2/hone.gif" />
 
-# Version 0.0.4
+# Version 0.0.5
 - Modular graphics
 - Easy prefabs
 - Fast plotting
