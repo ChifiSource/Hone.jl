@@ -14,6 +14,7 @@ include("HControl.jl")
 # Export mm from Compose:
 export mm
 export Line, Circle, Scatter, Rectangle, Grid, Frame, Linear, Text
-
+println(" Hone.jl is officially deprecated as of version 0.0.5")
+println(" Feel free to use the package, but know updates are NOT coming!")
 # =====================================
 end
