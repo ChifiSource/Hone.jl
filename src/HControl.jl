@@ -6,6 +6,8 @@ mutable struct Frame{A, S, T, SA}
     save::SA
     tag::String
     objects::Array
+    width::Int64
+    height::Int64
 function Frame(width::Int64, height::Int64, lm, bm)
     base = string("compose(context(units=UnitBox(0,0,",
     width, ",",
@@ -21,7 +23,7 @@ function Frame(width::Int64, height::Int64, lm, bm)
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition)
     A, S, T, SA = typeof(add), typeof(show), typeof(tree), typeof(save)
-    new{A, S, T, SA}(add, show, tree, save, tag, objects)
+    new{A, S, T, SA}(add, show, tree, save, tag, objects, width, height)
 end
 function _frameup(tag,objects,object)
     push!(objects, object.tag)
