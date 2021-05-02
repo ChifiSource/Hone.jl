@@ -1,10 +1,17 @@
 using Compose
-function Frame(width, height, lm, rm, tm, bm)
+mutable struct Frame{A, S, T, SA}
+    add::A
+    show::S
+    tree::T
+    save::SA
+    tag::String
+    objects::Array
+function Frame(width::Int64, height::Int64, lm, bm)
     base = string("compose(context(units=UnitBox(0,0,",
     width, ",",
     height, ",",
-    lm, ",", rm,",",
-    tm, ",", bm,
+    lm, ",", 0mm,",",
+    0mm, ",", bm,
         ")),")
     objects = []
     tag = base
@@ -13,7 +20,8 @@ function Frame(width, height, lm, rm, tm, bm)
     show() = composition
     tree() = introspect(composition)
     save(name) = draw(SVG(name), composition)
-    (var)->(add;show;tag;base;objects;composition;save;tree;width;height;lm;bm;rm;tm)
+    A, S, T, SA = typeof(add), typeof(show), typeof(tree), typeof(save)
+    new{A, S, T, SA}(add, show, tree, save, tag, objects)
 end
 function _frameup(tag,objects,object)
     push!(objects, object.tag)
@@ -26,6 +34,7 @@ function _frameup(tag,objects,object)
     println(exp)
     composition = eval(exp)
     return(composition,objects,tag)
+end
 end
 function Container(width, height, lm, rm)
     tag = string("context(units=UnitBox(0,0,",

@@ -1,13 +1,18 @@
 <div align="center"><img src="https://github.com/emmettgb/Hone.jl/blob/0.0.2/hone.gif" />
 
-# Hone.jl is now deprecated as of 0.0.5 release.
+# Revived!
 # Version 0.0.5
 - Modular graphics
 - Easy prefabs
+- Object-oriented
 - Fast plotting
 - Simple and Light
 - 100% Julia code
 - Meta Data
+- Extendable
+- DataFrames.jl Compatible
+- Interactive ( Coming Soon :) )
+- Animated ( Coming Soon :) )
 ### Graphs
 ```julia
 using Hone
