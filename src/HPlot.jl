@@ -6,11 +6,10 @@ include("HDraw.jl")
 using Compose
 using DataFrames
 
-function _arrayscatter(x, y,
-        shape=Circle(.5,.5,25),
+function Scatter(x::Array, y::Array; shape = Circle(.5,.5,25),
         grid = Grid(4),
         features = [Axis(:X), Axis(:Y)],
-        frame=Frame(1280,720,0mm,0mm,0mm,0mm),
+        frame=Frame(1280,720,0mm,0mm),
         )
     points = Points(x, y, frame, shape)
     frame.add(points)
@@ -20,13 +19,41 @@ function _arrayscatter(x, y,
     for feature in features
         frame.add(feature);
     end
-    show() = frame.show()
-    tree() = introspect(composition)
-    save(name) = draw(SVG(name), composition);
-    get_frame() = frame
-    add(obj) = frame.add(obj)
-    (var)->(show;composition;tree;save;get_frame;add;x;y;points)
+    return(frame)
 end
+function Scatter(x::DataFrame,
+     y::Symbol, shape::Array, axiscolor=:lightblue, grid=Grid(3),
+    frame=Frame(Frame(1280, 720, 0mm, 0mm))
+    )
+    topy = maximum(x[!, y])
+    axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
+   axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
+    axisy = Line([(0,0), (0,1), (0,1)],:blue)
+    axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
+    expression = string("compose(context()", ",", axisx_tag, axisy_tag)
+    # Coordinate parsing -------
+    y = x[!, y]
+    counter = 0
+    for col in eachcol(x, false)
+        counter = counter + 1
+        topx = maximum(col)
+       if col !=  y
+            for (i, w) in zip(col, y)
+                expression = string(expression, "(context(), ")
+                current_shape = shape[counter]
+                inputx = (i / topx) * frame.width
+                inputy = (w / topy) * frame.height
+                exp = current_shape.update(inputx,inputy)
+                expression = string(expression,string(exp),"),")
+            end
+        end
+    end
+    expression = string(expression,")")
+    tt = transfertype(expression)
+    frame.add(expression)
+    return(frame)
+end
+
 mutable struct transfertype
    tag
 end
@@ -81,41 +108,6 @@ function Grid(divisions,frame=Frame(1280,720,0mm,0mm,0mm,0mm),colorx=:lightblue,
     (var)->(update;composexp;show;save;tag;division_amountx;division_amounty;frame;divisions)
 end
 #--------
-function _dfscatter(x, y, shape, axiscolor=:lightblue, grid=Grid(3),
-    frame=Frame(Frame(1280, 720, 0mm, 0mm, 0mm, 0mm))
-    )
-    topy = maximum(x[y])
-    axisx = Line([(-1,-1), (-1,1), (1,1)],:blue)
-   axisx_tag = axisx.update([(-1,-1), (-1,1), (1,1)])
-    axisy = Line([(0,0), (0,1), (0,1)],:blue)
-    axisy_tag = axisy.update([(0,0), (0,1), (0,1)])
-    expression = string("compose(context()", ",", axisx_tag, axisy_tag)
-    # Coordinate parsing -------
-    y = x[y]
-    counter = 0
-    for col in eachcol(x, false)
-        counter = counter + 1
-        topx = maximum(col)
-       if col !=  y
-            for (i, w) in zip(col, y)
-                expression = string(expression, "(context(), ")
-                current_shape = shape[counter]
-                inputx = (i / topx) * frame.width
-                inputy = (w / topy) * frame.height
-                exp = current_shape.update(inputx,inputy)
-                expression = string(expression,string(exp),"),")
-            end
-        end
-    end
-    expression = string(expression,")")
-    tt = transfertype(expression)
-    frame.add(expression)
-    composition = eval(expression)
-    show() = frame.show()
-    add(obj) = frame.add(obj)
-    tree() = introspect(composition)
-    (var)->(show;composition;tree;x;y)
-end
 function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
     pairs = []
@@ -141,34 +133,6 @@ function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
     get_frame() = frame
     (var)->(show;composition;tree;save;get_frame)
 end
-function _dfline(x,y,shape)
-
-end
-    @doc """Scatter\n
-    The Scatter function takes either a DataFrame and Symbol OR two Arrays and returns
-         a Hone scatter plot object.\n
-    -------------------------------\n
-    ======== PARAMETERS ======\n
-    (x,y,shape=Circle(.5,.5,25),axiscolor=:lightblue,debug=false, grid=Grid(3), custom="", frame=Frame(1280,720,0mm,0mm,0mm,0mm)\n
-    x:: An Array of X coordinates OR a DataFrame containing both X's and Y's to be plotted.\n
-    y:: An array of corresponding Y coordinates OR a Symbol representing which DataFrame column to use as Y.\n
-    shape:: Takes a Hone.jl Shape object OR an iterable list of shapes with the same length as the number of X's
-    in the provided DataFrame, or X\n
-    axiscolor:: Symbol representing the color of both the X and Y axis's. For more information on available colors, please
-    use ?(HoneColors)\n
-    debug:: Boolean that determines whether or not the function will print the meta expression on creation.\n
-    grid:: Takes a Hone Grid object. For more information on grids, please use ?(Grid)\n
-    custom:: Custom takes a meta expression (as a an unparsed string), and can be used to add customizable features
-     to a plot.\n
-     frame:: Takes a Hone Frame object. For more information on Frames, please use ?(Frame)\n
-    --------------------------------\n
-    ========= METHODS ========\n
-    Line.show() - Displays the frame which contains the plot's composition.\n
-    Line.tree() - Shows an introspection of contexts contained in the plot's composition.\n
-    Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
-    Line.get_frame() - Returns the frame which contains the plot as a child object."""
-Scatter(x::DataFrame,y::Symbol,shape::Array,axiscolor) = _dfscatter(x,y,shape,axiscolor)
-Scatter(x::Array,y::Array,shape,axiscolor) = _arrayscatter(x,y,shape,axiscolor)
 @doc """Line\n
 The Line function takes either a DataFrame and Symbol OR two Arrays and returns
      a Hone line plot object.\n
@@ -193,7 +157,6 @@ Line.tree() - Shows an introspection of contexts contained in the plot's composi
 Line.save(URI) - Saves the plot as a Scalable Vector Graphic (SVG) file at the given URI.\n
 Line.get_frame() - Returns the frame which contains the plot as a child object."""
 Linear(x::Array,y::Array,shape) = _arrayline(x,y,shape)
-Linear(x::DataFrame,y::Symbol,shape) = _dfline(x,y,shape)
 @doc """Colors\n
 You can use HoneColors(color) to view a color.\n
 color:: Symbol used to represent the desired color.\n
