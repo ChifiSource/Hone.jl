@@ -19,6 +19,7 @@ function Scatter(x::Array, y::Array; shape = Circle(.5,.5,25),
     for feature in features
         frame.add(feature);
     end
+    frame.add(points)
     return(frame)
 end
 function Scatter(x::DataFrame,
