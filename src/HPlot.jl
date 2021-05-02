@@ -75,7 +75,7 @@ thickness:: Will determine the width of each line in the grid.
 Grid.show() - Shows the Grid's composition.\n
 Grid.update() - Returns the Grid's Meta-tag.\n
 Grid.save(URI) - Saves Grid as a Scalable Vector Graphic (SVG) File in the provided URI"""
-function Grid(divisions,frame=Frame(1280,720,0mm,0mm,0mm,0mm),colorx=:lightblue,colory=:lightblue,thickness=.2)
+function Grid(divisions,frame=Frame(1280,720,0mm,0mm),colorx=:lightblue,colory=:lightblue,thickness=.2)
     xlen = frame.width
     ylen = frame.height
     division_amountx = ylen / divisions
