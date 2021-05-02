@@ -109,7 +109,7 @@ function Grid(divisions,frame=Frame(1280,720,0mm,0mm),colorx=:lightblue,colory=:
 end
 #--------
 function _arrayline(x,y,color=:orange,weight=2,axiscolor=:lightblue,
-    grid=Grid(3), frame=Frame(1280,720,0mm,0mm,0mm,0mm))
+    grid=Grid(3), frame=Frame(1280,720,0mm,0mm))
     pairs = []
     topy = maximum(y)
     topx = maximum(x)
@@ -215,7 +215,7 @@ function GridLabels(x,y,grid)
     tag = string(xtags,ytags)
     ()->(tag;xtags;ytags)
 end
-function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), shape=Circle(.5, .5, 25))
+function Points(x, y, frame=Frame(1280,720,0mm,0mm), shape=Circle(.5, .5, 25))
     fheight = frame.height
     fwidth = frame.width
     topx = maximum(x)
@@ -235,7 +235,7 @@ function Points(x, y, frame=Frame(1280,720,0mm,0mm,0mm,0mm), shape=Circle(.5, .5
     show() = eval(Meta.parse(string("compose(context(), ", tag,")")))
     (var)->(tag;show)
 end
-function Axis(orientation=:X, axiscolor = :gray, frame=Frame(1280,720,0mm,0mm,0mm,0mm),)
+function Axis(orientation=:X, axiscolor = :gray, frame=Frame(1280,720,0mm,0mm),)
     if orientation == :X
         pairs = [(0,frame.height), (frame.width,frame.height)]
     else orientation == :Y
