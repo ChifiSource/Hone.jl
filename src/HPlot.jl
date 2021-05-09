@@ -11,7 +11,7 @@ function Scatter(x::Array, y::Array; shape = Circle(.5,.5,25),
         features = [Axis(:X), Axis(:Y)],
         frame=Frame(1280,720,0mm,0mm),
         )
-    points = Points(x, y, frame, shape)
+    points = Points(x, y, shape = shape)
     frame.add(points)
     glabels = GridLabels(x,y, grid)
     frame.add(grid)
