@@ -17,7 +17,8 @@ function Line(pairs, color=:black, width=2)
         pairstring = pairstring * s
     end
     update(pairs) = string("line([",string(join(pairstring)),"]), stroke(", color, "), linewidth(",width,"mm),")
-    (var)->(show;composition;tree;update;color;pairs)
+    tag = string("line([",string(join(pairstring)),"]), stroke(", color, "), linewidth(",width,"mm),")
+    (var)->(show;composition;tree;update;color;pairs;tag)
 end
 @doc """Circle\n
 -------------------------------\n

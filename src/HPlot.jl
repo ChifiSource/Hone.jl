@@ -216,7 +216,7 @@ function GridLabels(x,y,grid)
     tag = string(xtags,ytags)
     ()->(tag;xtags;ytags)
 end
-function Points(x, y, frame=Frame(1280,720,0mm,0mm), shape=Circle(.5, .5, 25))
+function Points(x, y; frame=Frame(1280,720,0mm,0mm), shape=Circle(.5, .5, 25))
     fheight = frame.height
     fwidth = frame.width
     topx = maximum(x)
